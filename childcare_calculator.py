@@ -1,7 +1,6 @@
 from calendar import monthrange
 from datetime import datetime
 
-
 class ChildCareCalculator:
     def calculate_monthly_cost(
         self,
@@ -13,6 +12,7 @@ class ChildCareCalculator:
         weekly_schedule,
         year,
         month,
+        include_tax_free,
     ):
         days_in_month = monthrange(year, month)[1]
         total_monthly_cost = 0
@@ -36,6 +36,14 @@ class ChildCareCalculator:
         adjusted_cost = paid_hours * (
             hourly_rate_full if total_monthly_hours > 0 else hourly_rate_short
         )
+
+        if include_tax_free:
+            # Calculate the top-up amount
+            top_up_amount = (adjusted_cost / 8) * 2
+            # Ensure the top-up does not exceed the maximum allowed per month
+            max_monthly_top_up = 500 / 3
+            top_up_amount = min(top_up_amount, max_monthly_top_up)
+            adjusted_cost = max(adjusted_cost - top_up_amount, 0)
 
         return adjusted_cost
 

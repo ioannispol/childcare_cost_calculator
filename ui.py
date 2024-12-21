@@ -1,6 +1,5 @@
 import tkinter as tk
 
-
 class ChildCareApp:
     def __init__(self, root, calculator, database):
         self.root = root
@@ -71,22 +70,27 @@ class ChildCareApp:
                 frame, text="None", variable=day_type_var, value="none"
             ).grid(row=0, column=3, sticky="w")
 
+        # Tax-free childcare option
+        self.tax_free_var = tk.BooleanVar()
+        tk.Checkbutton(root, text="Include Tax-Free Childcare", variable=self.tax_free_var).grid(row=8, column=0, columnspan=2)
+        tk.Label(root, text="For every £8 spent, the government adds £2, up to a maximum of £500 every 3 months (or £2000 per year)").grid(row=9, column=0, columnspan=2)
+
         # Result display
-        tk.Label(root, text="Monthly Cost (£):").grid(row=8, column=0, sticky="e")
+        tk.Label(root, text="Monthly Cost (£):").grid(row=10, column=0, sticky="e")
         self.result_label = tk.Label(root, text="--", font=("Arial", 12))
-        self.result_label.grid(row=8, column=1, sticky="w")
+        self.result_label.grid(row=10, column=1, sticky="w")
 
         # Calculate button
         self.calculate_button = tk.Button(
             root, text="Calculate", command=self.calculate_cost
         )
-        self.calculate_button.grid(row=9, column=0, columnspan=2)
+        self.calculate_button.grid(row=11, column=0, columnspan=2)
 
         # Export button
         self.export_button = tk.Button(
             root, text="Export to Excel", command=self.export_to_excel
         )
-        self.export_button.grid(row=10, column=0, columnspan=2)
+        self.export_button.grid(row=12, column=0, columnspan=2)
 
         # Bind resizing event to adjust fonts
         self.root.bind("<Configure>", self.adjust_font_size)
@@ -116,6 +120,8 @@ class ChildCareApp:
                 if day_type != "none":
                     weekly_schedule[i] = day_type
 
+            include_tax_free = self.tax_free_var.get()
+
             monthly_cost = self.calculator.calculate_monthly_cost(
                 full_day_fee,
                 short_day_fee,
@@ -125,6 +131,7 @@ class ChildCareApp:
                 weekly_schedule,
                 year,
                 month,
+                include_tax_free,
             )
             self.result_label.config(text=f"£{monthly_cost:.2f}")
 
