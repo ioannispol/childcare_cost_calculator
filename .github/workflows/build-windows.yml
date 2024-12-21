@@ -29,7 +29,7 @@ jobs:
 
     - name: Build Executable
       run: |
-        pyinstaller --onefile --name childcare_app.exe main.py
+        pyinstaller --onefile --noconsole --name childcare_app.exe main.py
 
     - name: Upload Executable
       uses: actions/upload-artifact@v3
