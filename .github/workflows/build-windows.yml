@@ -1,21 +1,14 @@
-name: Build Executable for Windows
+name: Build and Package Childcare App
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: [push]
 
 jobs:
   build:
-    name: Build Windows Executable
     runs-on: windows-latest
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v2
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -31,8 +24,12 @@ jobs:
       run: |
         pyinstaller --onefile --noconsole --name childcare_app.exe main.py
 
+    - name: Sign Executable
+      run: |
+        signtool sign /a /tr http://timestamp.digicert.com /td sha256 /fd sha256 /v dist/childcare_app.exe
+
     - name: Upload Executable
       uses: actions/upload-artifact@v3
       with:
-        name: childcare-app-windows
+        name: childcare_app
         path: dist/childcare_app.exe
