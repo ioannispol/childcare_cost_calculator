@@ -34,7 +34,49 @@ jobs:
 
     - name: Sign Executable
       run: |
+        signtool sign /a /tr http://timestamp.digicert.com /td sha256 /fd sha256 /v dist/childcare_app.name: Build and Package Childcare App
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller pandas openpyxl customtkinter
+
+    - name: Install Windows SDK
+      run: |
+        choco install windows-sdk-10-version-1903-all
+
+    - name: Add signtool to PATH
+      run: |
+        echo "C:\Program Files (x86)\Windows Kits\10\bin\x64" >> $env:GITHUB_PATH
+
+    - name: Build Executable
+      run: |
+        pyinstaller --onefile --noconsole --name childcare_app.exe main.py
+
+    - name: Sign Executable
+      run: |
         signtool sign /a /tr http://timestamp.digicert.com /td sha256 /fd sha256 /v dist/childcare_app.exe
+
+    - name: Upload Executable
+      uses: actions/upload-artifact@v3
+      with:
+        name: childcare_app
+        path: dist/childcare_app.exeexe
 
     - name: Upload Executable
       uses: actions/upload-artifact@v3
