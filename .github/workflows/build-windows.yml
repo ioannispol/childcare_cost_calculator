@@ -20,6 +20,14 @@ jobs:
         python -m pip install --upgrade pip
         pip install pyinstaller pandas openpyxl customtkinter
 
+    - name: Install Windows SDK
+      run: |
+        choco install windows-sdk-10-version-1903-all
+
+    - name: Add signtool to PATH
+      run: |
+        echo "::add-path::C:\Program Files (x86)\Windows Kits\10\bin\x64"
+
     - name: Build Executable
       run: |
         pyinstaller --onefile --noconsole --name childcare_app.exe main.py
