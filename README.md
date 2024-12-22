@@ -1,5 +1,7 @@
 # Child Care Cost Calculator
 
+[![Build Executable for Windows](https://github.com/ioannispol/childcare_cost_calculator/actions/workflows/build-windows.yml/badge.svg?branch=main&event=status)](https://github.com/ioannispol/childcare_cost_calculator/actions/workflows/build-windows.yml)
+
 This project is a Tkinter-based application to calculate child care costs.
 
 ## Installation
