@@ -6,7 +6,8 @@ setup(
     packages=find_packages(),
     install_requires=[
         "pandas",
-        "openpyxl",  # Required for exporting to Excel
+        "openpyxl",
+        "customtkinter",
     ],
     entry_points={
         "console_scripts": [

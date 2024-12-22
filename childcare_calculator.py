@@ -1,6 +1,7 @@
 from calendar import monthrange
 from datetime import datetime
 
+
 class ChildCareCalculator:
     def calculate_monthly_cost(
         self,
@@ -48,7 +49,9 @@ class ChildCareCalculator:
         return adjusted_cost
 
     @staticmethod
-    def parse_time_range(time_range, default_full="8am-6pm", default_short="9am-5pm", is_full_day=True):
+    def parse_time_range(
+        time_range, default_full="8am-6pm", default_short="9am-5pm", is_full_day=True
+    ):
         default = default_full if is_full_day else default_short
         if not time_range:
             time_range = default
