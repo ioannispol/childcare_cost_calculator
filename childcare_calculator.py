@@ -32,7 +32,7 @@ class ChildCareCalculator:
         paid_hours = max(total_monthly_hours - free_hours_per_month, 0)
 
         hourly_rate_full = full_day_fee / full_day_hours
-        hourly_rate_short = short_day_fee / short_day_hours
+        hourly_rate_short = short_day_fee / short_day_hours if short_day_hours else 0
         adjusted_cost = paid_hours * (
             hourly_rate_full if total_monthly_hours > 0 else hourly_rate_short
         )
@@ -48,16 +48,23 @@ class ChildCareCalculator:
         return adjusted_cost
 
     @staticmethod
-    def parse_time_range(time_range, default):
+    def parse_time_range(time_range, default_full="8am-6pm", default_short="9am-5pm", is_full_day=True):
+        default = default_full if is_full_day else default_short
         if not time_range:
-            return default
+            time_range = default
         try:
             start_time, end_time = time_range.split("-")
-            start_time = datetime.strptime(start_time.strip(), "%I%p")
-            end_time = datetime.strptime(end_time.strip(), "%I%p")
+            try:
+                start_time = datetime.strptime(start_time.strip(), "%I:%M%p")
+            except ValueError:
+                start_time = datetime.strptime(start_time.strip(), "%I%p")
+            try:
+                end_time = datetime.strptime(end_time.strip(), "%I:%M%p")
+            except ValueError:
+                end_time = datetime.strptime(end_time.strip(), "%I%p")
             duration = (end_time - start_time).seconds / 3600
             return duration
         except Exception as e:
             raise ValueError(
-                f"Invalid time range format: {time_range}. Expected format: '8am-6pm'. {e}"
+                f"Invalid time range format: {time_range}. Expected format: '8am-6pm' or '9am-5pm'. {e}"
             )

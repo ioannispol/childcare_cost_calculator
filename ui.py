@@ -17,13 +17,13 @@ class ChildCareApp:
         self.short_day_fee_entry = tk.Entry(root)
         self.short_day_fee_entry.grid(row=1, column=1)
 
-        tk.Label(root, text="Full Day Hours (e.g., 8am-6pm):").grid(
+        tk.Label(root, text="Full Day Hours (default: 8am-6pm):").grid(
             row=2, column=0, sticky="e"
         )
         self.full_day_hours_entry = tk.Entry(root)
         self.full_day_hours_entry.grid(row=2, column=1)
 
-        tk.Label(root, text="Short Day Hours (e.g., 9am-5pm):").grid(
+        tk.Label(root, text="Short Day Hours (default: 9am-5pm):").grid(
             row=3, column=0, sticky="e"
         )
         self.short_day_hours_entry = tk.Entry(root)
@@ -84,13 +84,19 @@ class ChildCareApp:
         self.calculate_button = tk.Button(
             root, text="Calculate", command=self.calculate_cost
         )
-        self.calculate_button.grid(row=11, column=0, columnspan=2)
+        self.calculate_button.grid(row=11, column=0)
 
         # Export button
         self.export_button = tk.Button(
             root, text="Export to Excel", command=self.export_to_excel
         )
-        self.export_button.grid(row=12, column=0, columnspan=2)
+        self.export_button.grid(row=11, column=1)
+
+        # Clear button
+        self.clear_button = tk.Button(
+            root, text="Clear", command=self.clear_fields
+        )
+        self.clear_button.grid(row=11, column=2)
 
         # Bind resizing event to adjust fonts
         self.root.bind("<Configure>", self.adjust_font_size)
@@ -98,13 +104,13 @@ class ChildCareApp:
     def calculate_cost(self):
         try:
             full_day_fee = float(self.full_day_fee_entry.get())
-            short_day_fee = float(self.short_day_fee_entry.get())
+            short_day_fee = float(self.short_day_fee_entry.get()) if self.short_day_fee_entry.get() else 0
 
             full_day_hours = self.calculator.parse_time_range(
-                self.full_day_hours_entry.get(), 10
+                self.full_day_hours_entry.get(), default_full="8am-6pm", is_full_day=True
             )
             short_day_hours = self.calculator.parse_time_range(
-                self.short_day_hours_entry.get(), 8
+                self.short_day_hours_entry.get(), default_short="9am-5pm", is_full_day=False
             )
 
             government_free_hours_per_week = float(
@@ -160,3 +166,16 @@ class ChildCareApp:
     def adjust_font_size(self, event):
         new_size = max(14, int(event.width / 50))
         self.result_label.config(font=("Arial", new_size))
+        
+    def clear_fields(self):
+        self.full_day_fee_entry.delete(0, tk.END)
+        self.short_day_fee_entry.delete(0, tk.END)
+        self.full_day_hours_entry.delete(0, tk.END)
+        self.short_day_hours_entry.delete(0, tk.END)
+        self.government_free_hours_entry.delete(0, tk.END)
+        self.year_entry.delete(0, tk.END)
+        self.month_entry.delete(0, tk.END)
+        for day in self.days:
+            self.schedule_vars[day].set("none")
+        self.tax_free_var.set(False)
+        self.result_label.config(text="--")
